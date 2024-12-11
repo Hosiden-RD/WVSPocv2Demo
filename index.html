@@ -55,6 +55,14 @@
     <audio id="anomalyLoopAudio" src="sound_file/norm_anom_loop.wav" loop preload="auto">your browser does not support audio label</audio>
     <div style="border-left: 1px solid #e0e0e0; align-self: stretch; margin: 0 10px;"></div>
     <button id="longTimeTestBtn" class="audio-button">Long time test</button>
+    <div class="col-md-3">
+      <select class="form-control" id="iso_examples">
+        <option>ISO class: Group 1, Rigid</option>
+        <option>ISO class: Group 1, Flexible</option>
+        <option>ISO class: Group 2, Rigid</option>
+        <option>ISO class: Group 2, Flexible</option>
+      </select>
+    </div>
   </div>
   <div class="row">
     <div class="col-4">
@@ -92,6 +100,7 @@
             </div>
             
             <div id="detection_status" class="card-body-text">No data, indicator Disabled</div>
+            <div id="iso_status" class="card-body-text"></div>
           </div>
         </div>
       </div>

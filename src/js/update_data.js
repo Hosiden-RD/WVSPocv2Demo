@@ -44,6 +44,8 @@
 
   var axis_sel_text;
 
+  var v_rms;
+
   function isDataNormal(fftDataArray,threshDataArray){
     if(freq_cnt > 0 && freq_cnt < 6){
         
@@ -67,11 +69,14 @@
             else
             {
                 if(sample_freq_index === 0){
-                  start_index[i] = Math.ceil(error_detect_start_freqs[i] / 13.021); // 13.021 = 26667/2048
-                  end_index[i] = Math.ceil(error_detect_end_freqs[i] / 13.021);
+                  start_index[i] = Math.ceil(error_detect_start_freqs[i] / 3.125); // 3.125 = 6400/2048
+                  end_index[i] = Math.ceil(error_detect_end_freqs[i] / 3.125);
                 }else if(sample_freq_index === 1){
-                  start_index[i] = Math.ceil(error_detect_start_freqs[i] / 0.81381); // 0.81381 = 1666.6875/2048
-                  end_index[i] = Math.ceil(error_detect_end_freqs[i] / 0.81381);
+                  start_index[i] = Math.ceil(error_detect_start_freqs[i] / 0.78125); // 0.78125 = 1600/2048
+                  end_index[i] = Math.ceil(error_detect_end_freqs[i] / 0.78125);
+                }else if(sample_freq_index === 2){
+                  start_index[i] = Math.ceil(error_detect_start_freqs[i] / 0.1953125); // 0.1953125 = 400/2048
+                  end_index[i] = Math.ceil(error_detect_end_freqs[i] / 0.1953125);
                 }
 
             }
@@ -353,7 +358,7 @@
       }
       // check zeroes
       if(checkHeader !== false){
-        for (let i = 13; i < 244; i++) {
+        for (let i = 17; i < 244; i++) {
           if (data.getUint8(i) !== 0) {
             checkZeroes = false;
             break;
@@ -461,25 +466,80 @@ ble.onRead = function (data, uuid){
           isThreeAxis = false;
           axis_sel_text = "only_x";
           fftdata.datasets[0].label = "X axis FFT";
+          document.getElementById('iso_status').innerHTML="";
           break;
         case 1:
           isThreeAxis = false;
           axis_sel_text = "only_y";
           fftdata.datasets[0].label = "Y axis FFT";
+          document.getElementById('iso_status').innerHTML="";
           break;
         case 2:
           isThreeAxis = false;
           axis_sel_text = "only_z";
           fftdata.datasets[0].label = "Z axis FFT";
+          document.getElementById('iso_status').innerHTML="";
           break;
         case 6:
           isThreeAxis = true;
           axis_sel_text = "all_three_axis";
+          document.getElementById('iso_status').innerHTML="";
           break;
         case 7:
           isThreeAxis = false;
           axis_sel_text = "xyz_synthesized";
           fftdata.datasets[0].label = "SYNTHESIZED FFT";
+
+          v_rms = data.getFloat32(13).toFixed(2);
+          console.log("v_rms is " + v_rms);
+          var isoIndex = document.getElementById('iso_examples').selectedIndex;
+          // Update ISO status based on v_rms value
+          const isoStatusElement = document.getElementById('iso_status');
+          if(isoIndex === 0){
+            if (v_rms < 2.3) {
+                isoStatusElement.innerHTML = 'Zone A';
+            } else if (v_rms < 4.5) {
+                isoStatusElement.innerHTML = 'Zone B';
+            } else if (v_rms < 7.1) {
+                isoStatusElement.innerHTML = 'Zone C';
+            } else {
+                isoStatusElement.innerHTML = 'Zone D';
+            }
+          }
+          else if(isoIndex === 1){
+            if (v_rms < 3.5) {
+                isoStatusElement.innerHTML = 'Zone A';
+            } else if (v_rms < 7.1) {
+                isoStatusElement.innerHTML = 'Zone B';
+            } else if (v_rms < 11.0) {
+                isoStatusElement.innerHTML = 'Zone C';
+            } else {
+                isoStatusElement.innerHTML = 'Zone D';
+            }
+          }
+          else if(isoIndex === 2){
+            if (v_rms < 1.4) {
+                isoStatusElement.innerHTML = 'Zone A';
+            } else if (v_rms < 2.8) {
+                isoStatusElement.innerHTML = 'Zone B';
+            } else if (v_rms < 4.5) {
+                isoStatusElement.innerHTML = 'Zone C';
+            } else {
+                isoStatusElement.innerHTML = 'Zone D';
+            }
+          }
+          else if(isoIndex === 3){
+            if (v_rms < 2.3) {
+                isoStatusElement.innerHTML = 'Zone A';
+            } else if (v_rms < 4.5) {
+                isoStatusElement.innerHTML = 'Zone B';
+            } else if (v_rms < 7.1) {
+                isoStatusElement.innerHTML = 'Zone C';
+            } else {
+                isoStatusElement.innerHTML = 'Zone D';
+            }
+          }
+
           break;
       }
 
@@ -969,7 +1029,7 @@ ble.onRead = function (data, uuid){
       for (var i = 0; i < xdata.length; i++) {
         scatterFFTData[i].x = (i * 6400/2048).toFixed(2);
       }
-      fftChart.options.scales.x.max = 6000;
+      fftChart.options.scales.x.max = 2800;
       fftChart.update();
 
       break;
@@ -1012,18 +1072,22 @@ ble.onRead = function (data, uuid){
     case 9:
       document.getElementById('data_name').innerHTML = "Ultra low freq period raw data mode";
       mode_index = 1;
+      sample_freq_index = 2;
       break;
     case 10:
       document.getElementById('data_name').innerHTML = "Ultra low freq period fft mode";
       mode_index = 2;
+      sample_freq_index = 2;
       break;
     case 11:
       document.getElementById('data_name').innerHTML = "Ultra low freq wake up raw data mode";
       mode_index = 3;
+      sample_freq_index = 2;
       break;
     case 12:
       document.getElementById('data_name').innerHTML = "Ultra low freq wake up fft mode";
       mode_index = 4;
+      sample_freq_index = 2;
       break;
     case 13:
       document.getElementById('data_name').innerHTML = "Long time test mode";

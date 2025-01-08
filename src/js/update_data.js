@@ -1428,14 +1428,14 @@ document.getElementById('setAxisBtn').addEventListener('click', function() {
   
 });
 
-document.getElementById('longTimeTestBtn').addEventListener('click', function() {
-  console.log("long time test!");
+// document.getElementById('longTimeTestBtn').addEventListener('click', function() {
+//   console.log("long time test!");
   
-  var test_flag = new Uint8Array([0x01]);
-  ble.write('LONGTIMETEST_UUID', test_flag);
-  console.log("long time test set");
+//   var test_flag = new Uint8Array([0x01]);
+//   ble.write('LONGTIMETEST_UUID', test_flag);
+//   console.log("long time test set");
   
-});
+// });
 
 document.getElementById('saveDataBtn').addEventListener('click', function() {
 
